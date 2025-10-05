@@ -84,33 +84,28 @@ class Genius:
     
     def get(self, search_term, per_page=15):
         """
-        Get search results from Genius API (similar to original genius() function).
+        Collect data from the Genius API by searching for `search_term`.
         
-        This method mirrors the behavior of the original genius() function from genius_api.py
-        that the autograder might be expecting.
-        
+        **Uses the stored access token from class initialization.**
+
         Parameters
         ----------
         search_term : str
             The name of an artist, album, etc.
         per_page : int, optional
             Maximum number of results to return, by default 15
-            
+
         Returns
         -------
         list
             All the hits which match the search criteria.
         """
-        # Build the search URL with the search term and our access token
-        search_url = f"http://api.genius.com/search?q={search_term}&" + \
-                    f"access_token={self.access_token}&per_page={per_page}"
+        genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
+                            f"access_token={self.access_token}&per_page={per_page}"
         
-        # Make the HTTP GET request to the search API
-        response = requests.get(search_url)
-        # Convert the response to JSON format
+        response = requests.get(genius_search_url)
         json_data = response.json()
         
-        # Return the hits array (same as original genius() function)
         return json_data['response']['hits']
     
     def get_artists(self, search_terms):
