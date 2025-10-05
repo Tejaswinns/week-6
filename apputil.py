@@ -41,10 +41,18 @@ class Genius:
         list
             All the hits which match the search criteria.
         """
-        genius_search_url = f"http://api.genius.com/search?q={search_term}&per_page={per_page}"
+        # Try to use environment ACCESS_TOKEN first (like original genius function)
+        import os
+        try:
+            access_token = os.environ['ACCESS_TOKEN']
+        except KeyError:
+            # Fallback to instance token if env not available
+            access_token = self.access_token
         
-        response = requests.get(genius_search_url,
-                               headers={"Authorization": "Bearer " + self.access_token})
+        genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
+                            f"access_token={access_token}&per_page={per_page}"
+        
+        response = requests.get(genius_search_url)
         json_data = response.json()
         
         return json_data['response']['hits']
