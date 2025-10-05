@@ -41,14 +41,14 @@ class Genius:
         list
             All the hits which match the search criteria.
         """
-        # Try to use environment ACCESS_TOKEN first (like original genius function)
         import os
+        # Use environment ACCESS_TOKEN (like original genius function)
+        # but fallback to instance token if environment not available
         try:
             access_token = os.environ['ACCESS_TOKEN']
         except KeyError:
-            # Fallback to instance token if env not available
             access_token = self.access_token
-        
+            
         genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
                             f"access_token={access_token}&per_page={per_page}"
         
