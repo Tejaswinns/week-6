@@ -23,6 +23,32 @@ class Genius:
         # This allows all methods in this class to use the same token
         self.access_token = access_token
     
+    def get(self, search_term, per_page=15):
+        """
+        Collect data from the Genius API by searching for `search_term`.
+        
+        **Assumes ACCESS_TOKEN is loaded in environment.**
+
+        Parameters
+        ----------
+        search_term : str
+            The name of an artist, album, etc.
+        per_page : int, optional
+            Maximum number of results to return, by default 15
+
+        Returns
+        -------
+        list
+            All the hits which match the search criteria.
+        """
+        genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
+                            f"access_token={self.access_token}&per_page={per_page}"
+        
+        response = requests.get(genius_search_url)
+        json_data = response.json()
+        
+        return json_data['response']['hits']
+    
     def get_artist(self, search_term):
         """
         Get artist information for a search term.
@@ -61,33 +87,6 @@ class Genius:
         artist_info = self._get_artist_details(artist_id)
         
         return artist_info
-    
-    def get(self, search_term, per_page=15):
-        """
-        Helper method to get search results from Genius API.
-        
-        This is a helper method that follows best practices by separating
-        the search functionality from the artist detail retrieval.
-        
-        Parameters
-        ----------
-        search_term : str
-            The name of an artist, album, etc.
-        per_page : int, optional
-            Maximum number of results to return, by default 15
-            
-        Returns
-        -------
-        list
-            All the hits which match the search criteria.
-        """
-        genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
-                            f"access_token={self.access_token}&per_page={per_page}"
-        
-        response = requests.get(genius_search_url)
-        json_data = response.json()
-        
-        return json_data['response']['hits']
 
     def _get_artist_details(self, artist_id):
         """
