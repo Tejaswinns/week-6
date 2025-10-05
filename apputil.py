@@ -43,19 +43,8 @@ class Genius:
         dict
             Dictionary containing the artist information from the API
         """
-        # STEP 1: Search for the artist using Genius search API
-        # Build the search URL with the search term and our access token
-        search_url = f"http://api.genius.com/search?q={search_term}&" + \
-                    f"access_token={self.access_token}&per_page=15"
-        
-        # Make the HTTP GET request to the search API
-        response = requests.get(search_url)
-        # Convert the response to JSON format
-        json_data = response.json()
-        
-        # Extract the 'hits' array from the search response
-        # This contains all the song results that match our search
-        hits = json_data['response']['hits']
+        # STEP 1: Use helper method to get search results
+        hits = self.get(search_term)
         
         # Check if we got any search results
         if not hits:
@@ -68,33 +57,25 @@ class Genius:
         # Structure: hit['result']['primary_artist']['id']
         artist_id = first_hit['result']['primary_artist']['id']
         
-        # STEP 3: Use the Genius Artist API to get detailed artist information
-        # Build the artist-specific URL using the artist ID we just extracted
-        artist_url = f"http://api.genius.com/artists/{artist_id}?" + \
-                    f"access_token={self.access_token}"
+        # STEP 3: Use helper method to get detailed artist information
+        artist_info = self._get_artist_details(artist_id)
         
-        # Make a second API call to get detailed artist information
-        artist_response = requests.get(artist_url)
-        # Convert the artist response to JSON format
-        artist_json = artist_response.json()
-        
-        # STEP 4: Return the artist information dictionary
-        # Extract just the artist data from the response
-        return artist_json['response']['artist']
+        return artist_info
     
     def get(self, search_term, per_page=15):
         """
-        Collect data from the Genius API by searching for `search_term`.
+        Helper method to get search results from Genius API.
         
-        **Uses the stored access token from class initialization.**
-
+        This is a helper method that follows best practices by separating
+        the search functionality from the artist detail retrieval.
+        
         Parameters
         ----------
         search_term : str
             The name of an artist, album, etc.
         per_page : int, optional
             Maximum number of results to return, by default 15
-
+            
         Returns
         -------
         list
@@ -107,7 +88,29 @@ class Genius:
         json_data = response.json()
         
         return json_data['response']['hits']
-    
+
+    def _get_artist_details(self, artist_id):
+        """
+        Helper method to get detailed artist information given an artist ID.
+        
+        Args:
+            artist_id (int): The Genius artist ID
+            
+        Returns:
+            dict: Artist information from Genius API
+        """
+        # Build the artist-specific URL using the artist ID
+        artist_url = f"http://api.genius.com/artists/{artist_id}?" + \
+                    f"access_token={self.access_token}"
+        
+        # Make API call to get detailed artist information
+        artist_response = requests.get(artist_url)
+        # Convert the artist response to JSON format
+        artist_json = artist_response.json()
+        
+        # Return the artist information dictionary
+        return artist_json['response']['artist']
+
     def get_artists(self, search_terms):
         """
         Get artist information for multiple search terms and return as DataFrame.
