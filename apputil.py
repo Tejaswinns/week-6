@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # constants
-ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN', '')
 
 class Genius:
     """
@@ -49,8 +49,10 @@ class Genius:
         list
             All the hits which match the search criteria.
         """
+        # Use ACCESS_TOKEN if available, otherwise fall back to instance token
+        token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
         genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
-                            f"access_token={ACCESS_TOKEN}&per_page={per_page}"
+                            f"access_token={token}&per_page={per_page}"
         
         response = requests.get(genius_search_url)
         json_data = response.json()
