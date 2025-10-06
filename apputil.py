@@ -79,9 +79,10 @@ class Genius:
         dict
             Dictionary containing the artist information from the API
         """
-        # STEP 1: Search for the artist using stored access token
+        # STEP 1: Search for the artist using fallback token logic
+        token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
         search_url = f"http://api.genius.com/search?q={search_term}&" + \
-                    f"access_token={self.access_token}&per_page=15"
+                    f"access_token={token}&per_page=15"
         response = requests.get(search_url)
         json_data = response.json()
         hits = json_data['response']['hits']
@@ -112,9 +113,10 @@ class Genius:
         Returns:
             dict: Artist information from Genius API
         """
-        # Build the artist-specific URL using the artist ID
+        # Build the artist-specific URL using the artist ID with fallback token logic
+        token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
         artist_url = f"http://api.genius.com/artists/{artist_id}?" + \
-                    f"access_token={self.access_token}"
+                    f"access_token={token}"
         
         # Make API call to get detailed artist information
         artist_response = requests.get(artist_url)
