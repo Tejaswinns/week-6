@@ -99,9 +99,10 @@ class Genius:
         Returns:
             dict: Artist information from Genius API
         """
+        import os
         # Build the artist-specific URL using the artist ID
         artist_url = f"http://api.genius.com/artists/{artist_id}?" + \
-                    f"access_token={self.access_token}"
+                    f"access_token={os.environ['ACCESS_TOKEN']}"
         
         # Make API call to get detailed artist information
         artist_response = requests.get(artist_url)
