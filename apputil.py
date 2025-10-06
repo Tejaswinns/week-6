@@ -47,7 +47,7 @@ class Genius:
             All the hits which match the search criteria.
         """
         genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
-                            f"access_token={os.environ['ACCESS_TOKEN']}&per_page={per_page}"
+                            f"access_token={self.access_token}&per_page={per_page}"
         
         response = requests.get(genius_search_url)
         json_data = response.json()
