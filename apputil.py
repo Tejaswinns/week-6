@@ -1,5 +1,10 @@
 import requests
 import pandas as pd
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 class Genius:
     """
@@ -41,7 +46,6 @@ class Genius:
         list
             All the hits which match the search criteria.
         """
-        import os
         genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
                             f"access_token={os.environ['ACCESS_TOKEN']}&per_page={per_page}"
         
@@ -70,8 +74,12 @@ class Genius:
         dict
             Dictionary containing the artist information from the API
         """
-        # STEP 1: Use helper method to get search results
-        hits = self.get(search_term)
+        # STEP 1: Search for the artist using stored access token
+        search_url = f"http://api.genius.com/search?q={search_term}&" + \
+                    f"access_token={self.access_token}&per_page=15"
+        response = requests.get(search_url)
+        json_data = response.json()
+        hits = json_data['response']['hits']
         
         # Check if we got any search results
         if not hits:
@@ -99,10 +107,9 @@ class Genius:
         Returns:
             dict: Artist information from Genius API
         """
-        import os
         # Build the artist-specific URL using the artist ID
         artist_url = f"http://api.genius.com/artists/{artist_id}?" + \
-                    f"access_token={os.environ['ACCESS_TOKEN']}"
+                    f"access_token={self.access_token}"
         
         # Make API call to get detailed artist information
         artist_response = requests.get(artist_url)
