@@ -164,7 +164,8 @@ class Genius:
                     artist_data = artist_info.get('artist', {})
                     artist_name = artist_data.get('name', 'Unknown')
                     artist_id = artist_data.get('id', None)
-                    followers_count = artist_data.get('followers_count', 0)  # Number of followers
+                    followers_count = artist_data.get('followers_count', 0)
+
 
                     # CREATE a dictionary with all required columns for this row
                     results.append({
