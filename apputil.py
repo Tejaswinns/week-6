@@ -79,6 +79,10 @@ class Genius:
         dict
             Dictionary containing the artist information from the API
         """
+        # Handle invalid input
+        if not search_term or search_term is None:
+            return None
+            
         # STEP 1: Search for the artist using fallback token logic
         token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
         search_url = f"http://api.genius.com/search?q={search_term}&" + \
@@ -124,7 +128,7 @@ class Genius:
         artist_json = artist_response.json()
         
         # Return the artist information dictionary
-        return artist_json['response']['artist']
+        return artist_json['response']
 
     def get_artists(self, search_terms):
         """
@@ -157,10 +161,11 @@ class Genius:
                 if artist_info:
                     # EXTRACT the specific fields we need for our DataFrame
                     # Use .get() method with defaults in case fields are missing
-                    artist_name = artist_info.get('name', 'Unknown')  # Artist's name
-                    artist_id = artist_info.get('id', None)  # Genius artist ID
-                    followers_count = artist_info.get('followers_count', 0)  # Number of followers
-                    
+                    artist_data = artist_info.get('artist', {})
+                    artist_name = artist_data.get('name', 'Unknown')
+                    artist_id = artist_data.get('id', None)
+                    followers_count = artist_data.get('followers_count', 0)  # Number of followers
+
                     # CREATE a dictionary with all required columns for this row
                     results.append({
                         'search_term': search_term,  # Original search term
