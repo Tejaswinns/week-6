@@ -49,8 +49,9 @@ class Genius:
         list
             All the hits which match the search criteria.
         """
-        # Use ACCESS_TOKEN if available, otherwise fall back to instance token
-        token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
+        # Use instance token primarily, fall back to ACCESS_TOKEN if instance token is empty
+        token = self.access_token if self.access_token else ACCESS_TOKEN
+        
         genius_search_url = f"http://api.genius.com/search?q={search_term}&" + \
                             f"access_token={token}&per_page={per_page}"
         
@@ -84,7 +85,8 @@ class Genius:
             return None
             
         # STEP 1: Search for the artist using fallback token logic
-        token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
+        token = self.access_token if self.access_token else ACCESS_TOKEN
+        
         search_url = f"http://api.genius.com/search?q={search_term}&" + \
                     f"access_token={token}&per_page=15"
         response = requests.get(search_url)
@@ -118,7 +120,8 @@ class Genius:
             dict: Artist information from Genius API
         """
         # Build the artist-specific URL using the artist ID with fallback token logic
-        token = ACCESS_TOKEN if ACCESS_TOKEN else self.access_token
+        token = self.access_token if self.access_token else ACCESS_TOKEN
+        
         artist_url = f"http://api.genius.com/artists/{artist_id}?" + \
                     f"access_token={token}"
         
