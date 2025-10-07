@@ -130,8 +130,8 @@ class Genius:
         # Convert the artist response to JSON format
         artist_json = artist_response.json()
         
-        # Return the artist information dictionary
-        return artist_json['response']['artist']
+        # Return the full response structure (not just the artist data)
+        return artist_json
 
     def get_artists(self, search_terms):
         """
@@ -161,12 +161,15 @@ class Genius:
                 artist_info = self.get_artist(search_term)
                 
                 # Check if we successfully got artist information
-                if artist_info:
+                if artist_info and 'response' in artist_info:
+                    # EXTRACT the artist data from the response structure
+                    artist_data = artist_info['response']['artist']
+                    
                     # EXTRACT the specific fields we need for our DataFrame
                     # Use .get() method with defaults in case fields are missing
-                    artist_name = artist_info.get('name', 'Unknown')  # Artist's name
-                    artist_id = artist_info.get('id', None)  # Genius artist ID
-                    followers_count = artist_info.get('followers_count', 0)  # Number of followers
+                    artist_name = artist_data.get('name', 'Unknown')  # Artist's name
+                    artist_id = artist_data.get('id', None)  # Genius artist ID
+                    followers_count = artist_data.get('followers_count', 0)  # Number of followers
 
 
                     # CREATE a dictionary with all required columns for this row
